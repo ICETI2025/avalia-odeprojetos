@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Avaliação de Projetos Científicos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    img {
+      display: block;
+      margin: 0 auto 20px;
+      width: 200px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+      color: #555;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    textarea {
+      height: 80px;
+      resize: none;
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(to right, red, blue);
+      border-radius: 5px;
+      outline: none;
+      margin-top: 5px;
+      background-size: 0% 100%;
+      background-repeat: no-repeat;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #007BFF;
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+      z-index: 2;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: #007BFF;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    button {
+      background-color: #007BFF;
+      color: white;
+      padding: 12px;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      margin-top: 20px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #mensagem {
+      display: none;
+      color: green;
+      font-weight: bold;
+      margin-top: 15px;
+      text-align: center;
+    }
+    .slider-container {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .slider-value {
+      margin-left: 10px;
+      font-weight: bold;
+      color: #333;
+      min-width: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <img src="iceti.png" alt="Logo ICETI" />
+
+  <h2>Avaliação de Projetos Científicos</h2>
+
+  <form id="formAvaliacao" action="https://api.sheetmonkey.io/form/ifYPJ1oWv9WVwn8LtefvpD" method="post" onsubmit="exibirMensagem()">
+    
+    <label>Nome do Avaliador:</label>
+    <input type="text" name="Nome do Avaliador" required />
+
+    <label>Link do currículo Lattes do avaliador:</label>
+    <input type="text" name="Link do currículo Lattes" required />
+
+    <label>Número do Protocolo do Projeto:</label>
+    <input type="text" name="Número Protocolo do Projeto" required />
+
+    <label>Título do Projeto:</label>
+    <input type="text" name="Título do Projeto" required />
+
+    <!-- Avaliações -->
+    <label>Mérito, originalidade e relevância... (Peso3)</label>
+<small style="color:#888;">Arraste a bolinha para avaliar</small>
+    <div class="slider-container">
+      <input type="range" name="Mérito e relevância" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorMerito')" />
+      <span class="slider-value" id="valorMerito">0</span>
+    </div>
+    <textarea name="Observação Mérito" placeholder="Justifique sua avaliação"></textarea>
+
+    <label>Coerência e adequação do problema... (Peso 2)</label>
+<small style="color:#888;">Arraste a bolinha para avaliar</small>
+    <div class="slider-container">
+      <input type="range" name="Coerência do problema" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorCoerencia')" />
+      <span class="slider-value" id="valorCoerencia">0</span>
+    </div>
+    <textarea name="Observação Coerência" placeholder="Justifique sua avaliação"></textarea>
+
+    <label>Coerência e adequação do cronograma... (Peso 2)</label>
+<small style="color:#888;">Arraste a bolinha para avaliar</small>
+    <div class="slider-container">
+      <input type="range" name="Adequação do cronograma" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorCronograma')" />
+      <span class="slider-value" id="valorCronograma">0</span>
+    </div>
+    <textarea name="Observação Cronograma" placeholder="Justifique sua avaliação"></textarea>
+
+    <label>Aderência do projeto a temas do Paraná 2040... (Peso1)</label>
+<small style="color:#888;">Arraste a bolinha para avaliar</small>
+    <div class="slider-container">
+      <input type="range" name="Aderência Paraná 2040" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorAderencia')" />
+      <span class="slider-value" id="valorAderencia">0</span>
+    </div>
+    <textarea name="Observação Aderência" placeholder="Justifique sua avaliação"></textarea>
+
+    <label>Coerência entre experiência da equipe... (Peso1)</label>
+<small style="color:#888;">Arraste a bolinha para avaliar</small>
+    <div class="slider-container">
+      <input type="range" name="Experiência da equipe" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorExperiencia')" />
+      <span class="slider-value" id="valorExperiencia">0</span>
+    </div>
+    <textarea name="Observação Experiência" placeholder="Justifique sua avaliação"></textarea>
+
+    <label>Plano para Promoção, Popularização... (Peso1)</label>
+<small style="color:#888;">Arraste a bolinha para avaliar</small>
+    <div class="slider-container">
+      <input type="range" name="Divulgação Científica" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorDivulgacao')" />
+      <span class="slider-value" id="valorDivulgacao">0</span>
+    </div>
+    <textarea name="Observação Divulgação" placeholder="Justifique sua avaliação"></textarea>
+
+    <input type="hidden" name="Created" value="x-sheetmonkey-current-date-time" />
+    <button type="submit">Enviar Avaliação</button>
+  </form>
+
+  <p id="mensagem">✅ Resposta enviada com sucesso!</p>
+
+  <script>
+    function exibirMensagem() {
+      document.getElementById("mensagem").style.display = "block";
+    }
+
+    function atualizarValor(slider, valorId) {
+      const valor = slider.value;
+      document.getElementById(valorId).textContent = valor;
+
+      const percentual = (valor - slider.min) / (slider.max - slider.min) * 100;
+      slider.style.backgroundSize = percentual + '% 100%';
+    }
+
+    // Atualiza gradiente ao carregar a página
+    window.onload = function() {
+      const sliders = document.querySelectorAll('input[type="range"]');
+      sliders.forEach(slider => {
+        const spanId = slider.nextElementSibling.id;
+        atualizarValor(slider, spanId);
+      });
+    };
+  </script>
+
+</body>
+</html>
