@@ -1,298 +1,208 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Avaliação de Projetos Científicos</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-          },
-          colors: {
-            primary: {
-              DEFAULT: '#007BFF', // Azul primário
-              dark: '#0056b3',   // Azul mais escuro para hover
-            },
-            slider: {
-              red: '#ef4444',    // Vermelho (0-20)
-              orange: '#f97316', // Laranja (21-40)
-              yellow: '#facc15', // Amarelo (41-60)
-              lightGreen: '#84cc16', // Verde Claro (61-80)
-              green: '#22c55e',  // Verde Escuro (81-100)
-            },
-            track: {
-              DEFAULT: '#e5e7eb' // Cinza claro Tailwind para a trilha do slider não preenchida
-            }
-          }
-        }
-      }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Avaliação de Projetos Científicos</title>
+<style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
-  </script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    /* Estilos personalizados para o input range (barra e thumb) */
+    h2 {
+      text-align: center;
+      color: #0D0C0C;
+    }
+    img {
+      display: block;
+      margin: 0 auto 20px;
+      width: 200px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+      color: #555;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    textarea {
+      height: 80px;
+      resize: none;
+    }
     input[type="range"] {
       -webkit-appearance: none;
       appearance: none;
       width: 100%;
-      height: 10px; /* Aumentei um pouco a altura para melhor visualização dos segmentos */
+      height: 6px;
+      background: linear-gradient(to right, red, yellow, green);
       border-radius: 5px;
       outline: none;
-      /* A cor de fundo da trilha base. O preenchimento colorido será aplicado via JS. */
-      background-color: var(--track-color, #e5e7eb);
-      background-repeat: no-repeat; /* Importante para o efeito de revelação */
+      margin-top: 5px;
+      background-size: 0% 100%;
+      background-repeat: no-repeat;
     }
-
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 24px; /* Aumentei um pouco o thumb */
-      height: 24px; /* Aumentei um pouco o thumb */
-      background: #1f2937; /* Cor do thumb (cinza escuro Tailwind) */
+      width: 20px;
+      height: 20px;
+      background: #0D0C0C;
       border-radius: 50%;
       cursor: pointer;
-      border: 3px solid white; /* Borda branca para destaque */
-      box-shadow: 0 0 5px rgba(0,0,0,0.2);
-      margin-top: -7px; /* Ajuste para centralizar o thumb na barra */
+      position: relative;
+      z-index: 2;
     }
-
     input[type="range"]::-moz-range-thumb {
-      width: 24px;
-      height: 24px;
-      background: #1f2937; /* Cor do thumb */
+      width: 20px;
+      height: 20px;
+      background: #007BFF;
       border-radius: 50%;
       cursor: pointer;
-      border: 3px solid white;
-      box-shadow: 0 0 5px rgba(0,0,0,0.2);
     }
-
-    /* Variáveis CSS para as cores do slider, acessíveis no JS */
-    :root {
-      --slider-red: #ef4444;
-      --slider-orange: #f97316;
-      --slider-yellow: #facc15;
-      --slider-lightGreen: #84cc16;
-      --slider-green: #22c55e;
-      --track-color: #e5e7eb; /* Cor da trilha não preenchida */
+    button {
+      background-color: #007BFF;
+      color: white;
+      padding: 12px;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      margin-top: 20px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
     }
-  </style>
+    button:hover {
+      background-color: #0056b3;
+    }
+    #mensagem {
+      display: none;
+      color: green;
+      font-weight: bold;
+      margin-top: 15px;
+      text-align: center;
+    }
+    .slider-container {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .slider-value {
+      margin-left: 10px;
+      font-weight: bold;
+      color: #333;
+      min-width: 30px;
+    }
+</style>
 </head>
-<body class="bg-slate-100 font-sans text-slate-800 antialiased">
-
-  <div class="container mx-auto max-w-3xl p-4 sm:p-6 md:p-8">
-    <header class="text-center mb-8">
-      <img src="https://raw.githubusercontent.com/ICETI2025/avalia-odeprojetos/main/iceti.png" alt="Logo ICETI" class="mx-auto mb-6 w-40 sm:w-48 md:w-56" />
-      <h2 class="text-2xl sm:text-3xl font-bold text-slate-700">Avaliação de Projetos Científicos</h2>
-    </header>
-
-    <form id="formAvaliacao"
-          action="https://api.sheetmonkey.io/form/jJotmHpLKDGoULBwkVKsvo"
-          method="post"
-          onsubmit="exibirMensagem()"
-          class="bg-white p-6 sm:p-8 rounded-xl shadow-xl space-y-6">
-
-      <div>
-        <label for="nomeAvaliador" class="block text-sm font-semibold text-slate-700 mb-1">Nome do Avaliador:</label>
-        <input type="text" id="nomeAvaliador" name="Nome do Avaliador" required
-               class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-shadow duration-150" />
-      </div>
-
-      <div>
-        <label for="linkLattes" class="block text-sm font-semibold text-slate-700 mb-1">Link do currículo Lattes do avaliador:</label>
-        <input type="text" id="linkLattes" name="Link do currículo Lattes" required
-               class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-shadow duration-150" />
-      </div>
-
-      <div>
-        <label for="protocoloProjeto" class="block text-sm font-semibold text-slate-700 mb-1">Número do Protocolo do Projeto:</label>
-        <input type="text" id="protocoloProjeto" name="Número Protocolo do Projeto" required
-               class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-shadow duration-150" />
-      </div>
-
-      <div>
-        <label for="tituloProjeto" class="block text-sm font-semibold text-slate-700 mb-1">Título do Projeto:</label>
-        <input type="text" id="tituloProjeto" name="Título do Projeto" required
-               class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-shadow duration-150" />
-      </div>
-
-      <fieldset class="space-y-6 pt-4 border-t border-slate-200">
-        <legend class="text-lg font-semibold text-slate-700 mb-4">Critérios de Avaliação</legend>
-
-        <div class="p-4 bg-slate-50 rounded-lg shadow-sm">
-          <label class="block text-sm font-medium text-slate-600">Mérito, originalidade e relevância do projeto para o desenvolvimento científico, tecnológico e de inovação do Estado do Paraná e do País. (Peso 3)</label>
-          <small class="text-xs text-slate-500 block mb-2">Arraste o círculo abaixo para atribuir sua nota.</small>
-          <div class="flex items-center space-x-3 mt-1">
-            <input type="range" name="Mérito e relevância" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorMerito')" class="flex-grow"/>
-            <span class="slider-value text-sm font-semibold text-slate-700 bg-slate-200 px-2 py-1 rounded-md min-w-[40px] text-center" id="valorMerito">0</span>
-          </div>
-          <textarea name="Observação Mérito" placeholder="Justifique sua avaliação"
-                    class="w-full mt-3 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-shadow duration-150 h-20 resize-none"></textarea>
-        </div>
-
-        <div class="p-4 bg-slate-50 rounded-lg shadow-sm">
-          <label class="block text-sm font-medium text-slate-600">Coerência e adequação do problema de pesquisa aos objetivos, metodologia e resultados esperados no projeto de pesquisa. (Peso 2)</label>
-          <small class="text-xs text-slate-500 block mb-2">Arraste o círculo abaixo para atribuir sua nota.</small>
-          <div class="flex items-center space-x-3 mt-1">
-            <input type="range" name="Coerência do problema" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorCoerencia')" class="flex-grow"/>
-            <span class="slider-value text-sm font-semibold text-slate-700 bg-slate-200 px-2 py-1 rounded-md min-w-[40px] text-center" id="valorCoerencia">0</span>
-          </div>
-          <textarea name="Observação Coerência" placeholder="Justifique sua avaliação"
-                    class="w-full mt-3 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-shadow duration-150 h-20 resize-none"></textarea>
-        </div>
-
-        <div class="p-4 bg-slate-50 rounded-lg shadow-sm">
-          <label class="block text-sm font-medium text-slate-600">Coerência e adequação do cronograma de atividades com os resultados esperados do projeto de pesquisa. (Peso 2)</label>
-          <small class="text-xs text-slate-500 block mb-2">Arraste o círculo abaixo para atribuir sua nota.</small>
-          <div class="flex items-center space-x-3 mt-1">
-            <input type="range" name="Adequação do cronograma" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorCronograma')" class="flex-grow"/>
-            <span class="slider-value text-sm font-semibold text-slate-700 bg-slate-200 px-2 py-1 rounded-md min-w-[40px] text-center" id="valorCronograma">0</span>
-          </div>
-          <textarea name="Observação Cronograma" placeholder="Justifique sua avaliação"
-                    class="w-full mt-3 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-shadow duration-150 h-20 resize-none"></textarea>
-        </div>
-
-        <div class="p-4 bg-slate-50 rounded-lg shadow-sm">
-          <label class="block text-sm font-medium text-slate-600">Aderência do projeto de pesquisa proposto a um ou mais temas (Domínios e Subdomínios) do Paraná 2040 – Rotas Estratégicas de Ciência, Tecnologia & Inovação (CT&I), Ecossistema Norte Pioneiro. (Peso 1)</label>
-          <small class="text-xs text-slate-500 block mb-2">Arraste o círculo abaixo para atribuir sua nota.</small>
-          <div class="flex items-center space-x-3 mt-1">
-            <input type="range" name="Aderência Paraná 2040" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorAderencia')" class="flex-grow"/>
-            <span class="slider-value text-sm font-semibold text-slate-700 bg-slate-200 px-2 py-1 rounded-md min-w-[40px] text-center" id="valorAderencia">0</span>
-          </div>
-          <textarea name="Observação Aderência" placeholder="Justifique sua avaliação"
-                    class="w-full mt-3 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-shadow duration-150 h-20 resize-none"></textarea>
-        </div>
-
-        <div class="p-4 bg-slate-50 rounded-lg shadow-sm">
-          <label class="block text-sm font-medium text-slate-600">Coerência e adequação entre a experiência da equipe do projeto e os objetivos, atividades e metas propostos. (Peso 1)</label>
-          <small class="text-xs text-slate-500 block mb-2">Arraste o círculo abaixo para atribuir sua nota.</small>
-          <div class="flex items-center space-x-3 mt-1">
-            <input type="range" name="Experiência da equipe" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorExperiencia')" class="flex-grow"/>
-            <span class="slider-value text-sm font-semibold text-slate-700 bg-slate-200 px-2 py-1 rounded-md min-w-[40px] text-center" id="valorExperiencia">0</span>
-          </div>
-          <textarea name="Observação Experiência" placeholder="Justifique sua avaliação"
-                    class="w-full mt-3 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-shadow duration-150 h-20 resize-none"></textarea>
-        </div>
-
-        <div class="p-4 bg-slate-50 rounded-lg shadow-sm">
-          <label class="block text-sm font-medium text-slate-600">Plano para Promoção, Popularização e Divulgação Científica e Tecnológica: (Peso 1)</label>
-          <small class="text-xs text-slate-500 block mb-2">Arraste o círculo abaixo para atribuir sua nota.</small>
-          <div class="flex items-center space-x-3 mt-1">
-            <input type="range" name="Divulgação Científica" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorDivulgacao')" class="flex-grow"/>
-            <span class="slider-value text-sm font-semibold text-slate-700 bg-slate-200 px-2 py-1 rounded-md min-w-[40px] text-center" id="valorDivulgacao">0</span>
-          </div>
-          <textarea name="Observação Divulgação" placeholder="Justifique sua avaliação"
-                    class="w-full mt-3 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-shadow duration-150 h-20 resize-none"></textarea>
-        </div>
-
-      </fieldset>
-
-      <input type="hidden" name="Created" value="x-sheetmonkey-current-date-time" />
-
-      <button type="submit"
-              class="w-full bg-primary text-white font-semibold py-3 px-6 rounded-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors duration-150 text-base">
-        Enviar Avaliação
-      </button>
-    </form>
-
-    <p id="mensagem" class="hidden mt-6 text-center text-lg font-semibold text-green-600 bg-green-100 p-4 rounded-lg shadow">
-      ✅ Resposta enviada com sucesso!
-    </p>
-
-    <footer class="text-center mt-12 text-sm text-slate-500">
-      <p>&copy; <span id="currentYear"></span> Avaliação de Projetos Científicos. Todos os direitos reservados.</p>
-    </footer>
-  </div>
-
+<body>
+ 
+  <img src="https://raw.githubusercontent.com/ICETI2025/avalia-odeprojetos/main/iceti.png" alt="Logo ICETI" />
+ 
+  <h2>Avaliação de Projetos Científicos</h2>
+ 
+  <form id="formAvaliacao" action="https://api.sheetmonkey.io/form/jJotmHpLKDGoULBwkVKsvo" method="post" onsubmit="exibirMensagem()">
+<label>Nome do Avaliador:</label>
+<input type="text" name="Nome do Avaliador" required />
+ 
+    <label>Link do currículo Lattes do avaliador:</label>
+<input type="text" name="Link do currículo Lattes" required />
+ 
+    <label>Número do Protocolo do Projeto:</label>
+<input type="text" name="Número Protocolo do Projeto" required />
+ 
+    <label>Título do Projeto:</label>
+<input type="text" name="Título do Projeto" required />
+ 
+    <!-- Avaliações -->
+<label>Mérito, originalidade e relevância do projeto para o desenvolvimento científico, tecnológico e de inovação do Estado do Paraná e do País. (Peso3)</label>
+<small style="color:#888;">Arraste o circulo abaixo para atribuir sua nota </small>
+<div class="slider-container">
+<input type="range" name="Mérito e relevância" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorMerito')" />
+<span class="slider-value" id="valorMerito">0</span>
+</div>
+<textarea name="Observação Mérito" placeholder="Justifique sua avaliação"></textarea>
+ 
+    <label>Coerência e adequação do problema de pesquisa aos objetivos, metodologia e resultados esperados no projeto de pesquisa. (Peso 2)</label>
+<small style="color:#888;">Arraste o circulo abaixo para atribuir sua nota </small>
+<div class="slider-container">
+<input type="range" name="Coerência do problema" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorCoerencia')" />
+<span class="slider-value" id="valorCoerencia">0</span>
+</div>
+<textarea name="Observação Coerência" placeholder="Justifique sua avaliação"></textarea>
+ 
+    <label>Coerência e adequação do cronograma de atividades com os resultados esperados do projeto de pesquisa. (Peso 2)</label>
+<small style="color:#888;">Arraste o circulo abaixo para atribuir sua nota </small>
+<div class="slider-container">
+<input type="range" name="Adequação do cronograma" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorCronograma')" />
+<span class="slider-value" id="valorCronograma">0</span>
+</div>
+<textarea name="Observação Cronograma" placeholder="Justifique sua avaliação"></textarea>
+ 
+    <label>Aderência do projeto de pesquisa proposto a um ou mais temas (Domínios e Subdomínios) do Paraná 2040 – Rotas Estratégicas de Ciência, Tecnologia & Inovação (CT&I), Ecossistema Norte Pioneiro. (Peso1)</label>
+<small style="color:#888;">Arraste o circulo abaixo para atribuir sua nota </small>
+<div class="slider-container">
+<input type="range" name="Aderência Paraná 2040" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorAderencia')" />
+<span class="slider-value" id="valorAderencia">0</span>
+</div>
+<textarea name="Observação Aderência" placeholder="Justifique sua avaliação"></textarea>
+ 
+    <label>Coerência e adequação entre a experiência da equipe do projeto e os objetivos, atividades e metas propostos. (Peso1)</label>
+<small style="color:#888;">Arraste o circulo abaixo para atribuir sua nota </small>
+<div class="slider-container">
+<input type="range" name="Experiência da equipe" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorExperiencia')" />
+<span class="slider-value" id="valorExperiencia">0</span>
+</div>
+<textarea name="Observação Experiência" placeholder="Justifique sua avaliação"></textarea>
+ 
+    <label>Plano para Promoção, Popularização e Divulgação Científica e Tecnológica: (Peso1)</label>
+<small style="color:#888;">Arraste o circulo abaixo para atribuir sua nota </small>
+<div class="slider-container">
+<input type="range" name="Divulgação Científica" min="0" max="100" step="1" value="0" oninput="atualizarValor(this, 'valorDivulgacao')" />
+<span class="slider-value" id="valorDivulgacao">0</span>
+</div>
+<textarea name="Observação Divulgação" placeholder="Justifique sua avaliação"></textarea>
+ 
+    <input type="hidden" name="Created" value="x-sheetmonkey-current-date-time" />
+<button type="submit">Enviar Avaliação</button>
+</form>
+ 
+  <p id="mensagem">✅ Resposta enviada com sucesso!</p>
+ 
   <script>
-    // Função para exibir mensagem de sucesso
     function exibirMensagem() {
-      const mensagemEl = document.getElementById("mensagem");
-      mensagemEl.classList.remove("hidden");
-      mensagemEl.classList.add("block");
-
-      setTimeout(() => {
-        mensagemEl.classList.remove("block");
-        mensagemEl.classList.add("hidden");
-      }, 5000);
+      document.getElementById("mensagem").style.display = "block";
     }
-
-    // Função para atualizar o valor do slider e a cor de fundo da trilha preenchida
+ 
     function atualizarValor(slider, valorId) {
-      const valorEl = document.getElementById(valorId);
-      if (valorEl) {
-        valorEl.textContent = slider.value;
-      }
-
-      const currentValue = parseInt(slider.value, 10);
-      const percent = (currentValue - slider.min) / (slider.max - slider.min) * 100;
-
-      // Define as cores e os pontos de parada para os segmentos do gradiente
-      const colors = [
-        { color: 'var(--slider-red)', limit: 20 },       // Vermelho até 20%
-        { color: 'var(--slider-orange)', limit: 40 },    // Laranja até 40%
-        { color: 'var(--slider-yellow)', limit: 60 },    // Amarelo até 60%
-        { color: 'var(--slider-lightGreen)', limit: 80 },// Verde claro até 80%
-        { color: 'var(--slider-green)', limit: 100 }     // Verde escuro até 100%
-      ];
-      const trackColor = 'var(--track-color)';
-
-      let gradientStops = [];
-      
-      // Caso especial para 0%, preenche tudo com a cor da trilha
-      if (percent === 0) {
-          gradientStops.push(`${trackColor} 0%`);
-          gradientStops.push(`${trackColor} 100%`);
-      } else {
-          let accumulatedPercent = 0;
-          for (const segment of colors) {
-            if (percent > accumulatedPercent) { // Processa o segmento se o percentual atual o cobre
-              const segmentStart = accumulatedPercent;
-              const currentSegmentFill = Math.min(percent, segment.limit); // Preenche até o limite do segmento ou o percentual atual
-
-              gradientStops.push(`${segment.color} ${segmentStart}%`);
-              gradientStops.push(`${segment.color} ${currentSegmentFill}%`);
-              
-              if (percent <= segment.limit) break; // Para se o preenchimento atual não ultrapassa este segmento
-            }
-            accumulatedPercent = segment.limit;
-          }
-          // Adiciona a cor da trilha para o restante da barra, se não estiver 100% preenchido
-          if (percent < 100) {
-            gradientStops.push(`${trackColor} ${percent}%`);
-            gradientStops.push(`${trackColor} 100%`);
-          }
-      }
-
-
-      if (gradientStops.length > 0) {
-        slider.style.backgroundImage = `linear-gradient(to right, ${gradientStops.join(', ')})`;
-      } else {
-        // Fallback (deve ser coberto pelo caso de 0% acima)
-        slider.style.backgroundImage = `linear-gradient(to right, ${trackColor} 0%, ${trackColor} 100%)`;
-      }
-      slider.style.backgroundSize = '100% 100%'; // Garante que o gradiente cubra toda a barra
+      const valor = slider.value;
+      document.getElementById(valorId).textContent = valor;
+ 
+      const percentual = (valor - slider.min) / (slider.max - slider.min) * 100;
+      slider.style.backgroundSize = percentual + '% 100%';
     }
-
-
-    // Atualiza o gradiente e valor de todos os sliders ao carregar a página
-    window.addEventListener('load', function() {
+ 
+    // Atualiza gradiente ao carregar a página
+    window.onload = function() {
       const sliders = document.querySelectorAll('input[type="range"]');
       sliders.forEach(slider => {
-        const valorIdSpan = slider.closest('.flex.items-center').querySelector('.slider-value');
-        if (valorIdSpan && valorIdSpan.id) {
-          atualizarValor(slider, valorIdSpan.id);
-        } else {
-          console.warn("Span de valor ou seu ID não encontrado para o slider:", slider.name);
-        }
+        const spanId = slider.nextElementSibling.id;
+        atualizarValor(slider, spanId);
       });
-
-      document.getElementById('currentYear').textContent = new Date().getFullYear();
-    });
-  </script>
-
+    };
+</script>
+ 
 </body>
 </html>
